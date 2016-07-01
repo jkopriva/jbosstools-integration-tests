@@ -1,9 +1,22 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributor:
+ *     Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.jboss.tools.forge2.ui.bot.wizard.test;
 
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.HashMap;
+
+import org.jboss.ide.eclipse.as.reddeer.server.requirement.ServerReqType;
+import org.jboss.ide.eclipse.as.reddeer.server.requirement.ServerRequirement.JBossServer;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -17,6 +30,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.jboss.reddeer.common.matcher.RegexMatcher;
+import org.jboss.reddeer.common.wait.AbstractWait;
 import org.jboss.reddeer.common.wait.TimePeriod;
 import org.jboss.reddeer.common.wait.WaitUntil;
 import org.jboss.reddeer.core.condition.ShellWithTextIsActive;
@@ -36,6 +50,8 @@ import org.jboss.tools.forge.ui.bot.test.util.ScaffoldType;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+
+import org.jboss.reddeer.requirements.server.ServerReqState;
 /**
  * Base class for Forge2 wizard tests
  * @author Pavol Srna
@@ -156,7 +172,7 @@ public abstract class WizardTestBase {
 	}
 	
 	/**
-	 * Creates new project in currect workspace.
+	 * Creates new project in current workspace.
 	 * For more details @see WizardTestBase#newProject(String name, String path)
 	 * @param name
 	 */
@@ -243,6 +259,25 @@ public abstract class WizardTestBase {
 		new DefaultCombo().setSelection(type.getName());
 		new WaitUntil(new ButtonWithTextIsEnabled(new PushButton("Next >")));
 		dialog.next();
+		dialog.finish(TimePeriod.LONG);
+	}
+	
+	
+	public void setupScaffold(ScaffoldType type) {
+		scaffoldSetup(PROJECT_NAME, type);
+	}
+
+	public void createScaffold(ScaffoldType type) {
+		createScaffold(PROJECT_NAME, type);
+	}
+	
+	public void createScaffold(String projectName, ScaffoldType type) {
+		new ProjectExplorer().selectProjects(projectName);
+		WizardDialog dialog = getWizardDialog("Scaffold: Generate", "(Scaffold: Generate).*");
+		new DefaultCombo().setSelection(type.getName());
+		dialog.next();
+		new PushButton("Select All").click();
+		AbstractWait.sleep(TimePeriod.SHORT); //workaround for JBIDE-21053
 		dialog.finish(TimePeriod.LONG);
 	}
 }

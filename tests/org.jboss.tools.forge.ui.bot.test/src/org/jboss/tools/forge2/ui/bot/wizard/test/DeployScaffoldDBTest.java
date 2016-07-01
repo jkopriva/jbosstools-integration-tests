@@ -11,37 +11,48 @@
 package org.jboss.tools.forge2.ui.bot.wizard.test;
 
 import static org.junit.Assert.assertFalse;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.ide.eclipse.as.reddeer.server.requirement.ServerReqType;
+import org.jboss.ide.eclipse.as.reddeer.server.requirement.ServerRequirement.JBossServer;
 import org.jboss.reddeer.common.wait.TimePeriod;
 import org.jboss.reddeer.eclipse.core.resources.Project;
-import org.jboss.reddeer.eclipse.core.resources.ProjectItem;
 import org.jboss.reddeer.eclipse.jdt.ui.ProjectExplorer;
 import org.jboss.reddeer.jface.wizard.WizardDialog;
+import org.jboss.reddeer.requirements.server.ServerReqState;
 import org.jboss.reddeer.swt.api.TableItem;
+import org.jboss.reddeer.swt.impl.menu.ContextMenu;
 import org.jboss.tools.forge.reddeer.ui.wizard.ConnectionProfileWizardPage;
 import org.jboss.tools.forge.reddeer.ui.wizard.EntitiesFromTablesWizardFirstPage;
 import org.jboss.tools.forge.reddeer.ui.wizard.EntitiesFromTablesWizardSecondPage;
 import org.jboss.tools.forge.ui.bot.test.util.DatabaseUtils;
-import org.junit.Before;
+import org.jboss.tools.forge.ui.bot.test.util.ScaffoldType;
 import org.junit.Test;
 
+import org.jboss.tools.hibernate.reddeer.wizard.JBossDatasourceWizard;
+import org.jboss.tools.hibernate.reddeer.wizard.NewJBossDatasourceWizardPage;
+
 /**
- * Class for testing JPA entity generation from database tables
  * 
- * @author Jan Richter
+ * 
+ * @author jkopriva
  *
  */
-public class JPAEntitiesFromTablesTest extends WizardTestBase {
+@JBossServer(state = ServerReqState.RUNNING, type = ServerReqType.WILDFLY10x)
+public class DeployScaffoldDBTest extends WizardTestBase {
 
 	private String dbFolder = System.getProperty("database.path");
 	private List<String> tableNames = new ArrayList<String>();
+
+	private static final String PROJECT_NAME = "test-sakila-scaffold";
+
+	private static final String DATASOURCE_NAME = "sakila";
 
 	private static final String H2_DIALECT = "H2 Database : org.hibernate.dialect.H2Dialect";
 	private static final String PACKAGE = GROUPID + ".model";
@@ -50,8 +61,28 @@ public class JPAEntitiesFromTablesTest extends WizardTestBase {
 	private static final String SAKILA_USERNAME = "sa";
 	private static final String SAKILA_H2_DRIVER = "h2-1.3.161.jar";
 
-	@Before
-	public void prepare() {
+	@Test
+	public void testDeployScaffoldDB() {
+		createNewProject();
+		createConnectionProfile();
+		createJBOSSDatasource();
+		jpaSetup();
+		jpaGenerateEntities();
+		generateScaffold();
+		deployOnServer();
+	}
+
+	@Override
+	public void cleanup() {
+		super.cleanup();
+		DatabaseUtils.stopSakilaDB();
+	}
+
+	public void createNewProject() {
+		newProject(PROJECT_NAME);
+	}
+
+	public void createConnectionProfile() {
 		assertNotNull(dbFolder);
 		DatabaseUtils.runSakilaDB(dbFolder);
 		newProject(PROJECT_NAME);
@@ -67,8 +98,21 @@ public class JPAEntitiesFromTablesTest extends WizardTestBase {
 		dialog.finish(TimePeriod.LONG);
 	}
 
-	@Test
-	public void testGenerateEntities() {
+	public void createJBOSSDatasource() {
+		JBossDatasourceWizard wizard = new JBossDatasourceWizard();
+		wizard.open();
+		NewJBossDatasourceWizardPage page = new NewJBossDatasourceWizardPage();
+		page.setConnectionProfile(DATASOURCE_NAME);
+		page.setParentFolder("/" + PROJECT_NAME + "/src/main/resources");
+		page.finish();
+
+	}
+
+	public void jpaSetup() {
+		persistenceSetup(PROJECT_NAME);
+	}
+
+	public void jpaGenerateEntities() {
 		new ProjectExplorer().selectProjects(PROJECT_NAME);
 		WizardDialog dialog = getWizardDialog("JPA: Generate Entities From Tables",
 				"(JPA: Generate Entities From Tables).*");
@@ -86,33 +130,22 @@ public class JPAEntitiesFromTablesTest extends WizardTestBase {
 		}
 		secondPage.selectAll();
 		dialog.finish();
-
-		checkEntityClasses();
 	}
 
-	@Override
-	public void cleanup() {
-		super.cleanup();
-		DatabaseUtils.stopSakilaDB();
+	public void generateScaffold() {
+		ScaffoldType angular = ScaffoldType.ANGULARJS;
+		scaffoldSetup(PROJECT_NAME, angular);
+		createScaffold(PROJECT_NAME, angular);
 	}
 
-	private void checkEntityClasses() {
-		Project project = new ProjectExplorer().getProject(PROJECT_NAME);
-		project.refresh();
-		boolean hasResources = project.containsItem("Java Resources", "src/main/java", PACKAGE);
-		if(!hasResources)
-			fail("No resources have been generated!");
-		ProjectItem model = project.getProjectItem("Java Resources", "src/main/java", PACKAGE);
-
-		for (String name : tableNames) {
-			// replace UNDERSCORES with UpperCamelCase
-			String entityName = "";
-			String[] nameParts = name.split("_");
-			for (int i = 0; i < nameParts.length; i++) {
-				entityName += nameParts[i].charAt(0) + nameParts[i].substring(1).toLowerCase();
-			}
-
-			assertTrue("Class for entity " + entityName + " is missing", model.containsItem(entityName + ".java"));
-		}
+	public void deployOnServer() {
+		ProjectExplorer explorer = new ProjectExplorer();
+		explorer.activate();
+		Project project = explorer.getProject(PROJECT_NAME);
+		project.select();
+		new ContextMenu("Run As", "1 Run on Server").select();
+		new WizardDialog().finish();
+		// TODO check deploy of project
 	}
+
 }

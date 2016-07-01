@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Red Hat, Inc.
+ * Distributed under license by Red Hat, Inc. All rights reserved.
+ * This program is made available under the terms of the
+ * Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributor:
+ *     Red Hat, Inc. - initial API and implementation
+ ******************************************************************************/
 package org.jboss.tools.forge2.ui.bot.wizard.test;
 
 import static org.junit.Assert.assertNotNull;
@@ -162,17 +172,5 @@ public class ScaffoldWizardTest extends WizardTestBase {
 		newJPAEntity(PROJECT_NAME, name, "", GROUPID + ".model");
 	}
 
-	private void setupScaffold(ScaffoldType type) {
-		scaffoldSetup(PROJECT_NAME, type);
-	}
 
-	private void createScaffold(ScaffoldType type) {
-		new ProjectExplorer().selectProjects(PROJECT_NAME);
-		WizardDialog dialog = getWizardDialog("Scaffold: Generate", "(Scaffold: Generate).*");
-		new DefaultCombo().setSelection(type.getName());
-		dialog.next();
-		new PushButton("Select All").click();
-		AbstractWait.sleep(TimePeriod.SHORT); //workaround for JBIDE-21053
-		dialog.finish(TimePeriod.LONG);
-	}
 }
