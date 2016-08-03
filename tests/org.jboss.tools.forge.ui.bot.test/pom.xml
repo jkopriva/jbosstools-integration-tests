@@ -68,5 +68,45 @@
 			</properties>
 		</profile>
 	</profiles>
+	<profile>
+		<id>check-pr</id>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>target-platform-configuration</artifactId>
+					<configuration>
+						<dependency-resolution>
+							<extraRequirements>
+								<requirement>
+									<type>p2-installable-unit</type>
+									<id>org.jboss.tools.forge.feature.feature.group</id>
+									<versionRange>0.0.0</versionRange>
+								</requirement>
+								<requirement>
+									<type>p2-installable-unit</type>
+									<artifactId>org.jboss.ide.eclipse.as.feature.feature.group</artifactId>
+									<version>0.0.0</version>
+								</requirement>
+								<requirement>
+									<type>p2-installable-unit</type>
+									<artifactId>org.eclipse.jdt.feature.group</artifactId>
+									<version>0.0.0</version>
+								</requirement>
+								<requirement>
+									<type>p2-installable-unit</type>
+									<artifactId>org.eclipse.m2e.wtp.feature.feature.group</artifactId>
+									<version>0.0.0</version>
+								</requirement>
+							</extraRequirements>
+						</dependency-resolution>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+		<properties>
+			<test.database>${test.database}</test.database>
+		</properties>
+	</profile>
 
 </project>
