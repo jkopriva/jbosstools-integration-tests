@@ -9,14 +9,18 @@
  *     Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
 
-package org.jboss.tools.docker.ui.bot.test.container;
+package org.jboss.tools.docker.ui.bot.test.ui;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import org.jboss.reddeer.common.wait.TimePeriod;
 import org.jboss.reddeer.common.wait.WaitWhile;
 import org.jboss.reddeer.core.condition.JobIsRunning;
 import org.jboss.reddeer.eclipse.ui.views.properties.PropertiesView;
+import org.jboss.reddeer.swt.api.TableItem;
+import org.jboss.reddeer.swt.exception.SWTLayerException;
 import org.jboss.tools.docker.reddeer.core.ui.wizards.RunADockerImagePageOneWizard;
+import org.jboss.tools.docker.reddeer.ui.DockerContainersTab;
 import org.jboss.tools.docker.reddeer.ui.DockerImagesTab;
 import org.jboss.tools.docker.ui.bot.test.AbstractDockerBotTest;
 import org.junit.After;
@@ -29,20 +33,20 @@ import org.junit.Test;
  *
  */
 
-public class PrivilegedModeTest extends AbstractDockerBotTest {
+public class PropertiesViewTest extends AbstractDockerBotTest {
 
-	private String imageName = "debian:jessie";
-	private String containerName = "test_run_debian";
+	private String imageName = "docker/whalesay";
+	private String containerName = "test_run_docker_whalesay";
 
 	@Before
 	public void before() {
 		openDockerPerspective();
 		createConnection();
+		pullImage(this.imageName);
 	}
 
 	@Test
-	public void testPrivilegedMode() {
-		pullImage(this.imageName);
+	public void testContainerPropertiesTab() {
 		DockerImagesTab imageTab = new DockerImagesTab();
 		imageTab.activate();
 		imageTab.refresh();
@@ -50,23 +54,56 @@ public class PrivilegedModeTest extends AbstractDockerBotTest {
 		imageTab.runImage(this.imageName);
 		RunADockerImagePageOneWizard firstPage = new RunADockerImagePageOneWizard();
 		firstPage.setName(this.containerName);
-		firstPage.setAllocatePseudoTTY();
-		firstPage.setKeepSTDINOpen();
-		firstPage.setGiveExtendedPrivileges();
 		firstPage.finish();
 		new WaitWhile(new JobIsRunning());
-		selectContainerInDockerExplorer(containerName);
+		DockerContainersTab containerTab = new DockerContainersTab();
+		containerTab.activate();
+		containerTab.refresh();
+
+		new WaitWhile(new JobIsRunning(), TimePeriod.NORMAL);
+
+		for (TableItem item : containerTab.getTableItems()) {
+			if (item.getText(1).contains(this.imageName)) {
+				item.click();
+				break;
+			}
+		}
+
+		// get values from Properties view
 		PropertiesView propertiesView = new PropertiesView();
 		propertiesView.open();
-		propertiesView.selectTab("Inspect");
-		String privilegedProp = propertiesView.getProperty("HostConfig", "Privileged").getPropertyValue();
-		assertTrue("Container is not running in privileged mode!", privilegedProp.equals("true"));
+		try {
+			propertiesView.selectTab("Info");
+		} catch (SWTLayerException ex) {
+			fail("Properties tab Info is not opened, is image selected in Images Tab?");
+		}
+	}
+
+	@Test
+	public void testImagePropertiesTab() {
+		DockerImagesTab imageTab = new DockerImagesTab();
+		imageTab.activate();
+		imageTab.refresh();
+
+		for (TableItem item : imageTab.getTableItems()) {
+			if (item.getText(1).contains(imageName)) {
+				item.click();
+			}
+		}
+
+		PropertiesView propertiesView = new PropertiesView();
+		propertiesView.open();
+		try {
+			propertiesView.selectTab("Info");
+		} catch (SWTLayerException ex) {
+			fail("Properties tab Info is not opened, is image selected in Images Tab?");
+		}
 	}
 
 	@After
 	public void after() {
 		deleteContainer(this.containerName);
-		deleteImage("debian");
+		deleteImage(this.imageName);
 		deleteConnection();
 	}
 
