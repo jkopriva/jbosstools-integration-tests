@@ -104,7 +104,8 @@ public class DockerConnectionWizard extends WizardPage {
 		new WaitUntil(new ShellWithTextIsAvailable("Docker Connection Selection"));
 		Table table = new DefaultTable();
 		table.getItem(connectionName).select();
-		new PushButton("OK").click();	
+		new PushButton("OK").click();
+		new WaitUntil(new JobIsRunning());
 	}
 
 }
