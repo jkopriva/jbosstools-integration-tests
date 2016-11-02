@@ -11,7 +11,8 @@
 	<artifactId>org.jboss.tools.forge.ui.bot.test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 	<properties>
-		<systemProperties>-Ddatabase.path=${test.database}</systemProperties>
+		<systemProperties>-Ddatabase.path=${test.database} -Drd.config=${reddeer.config}</systemProperties>
+		<reddeer.config>resources/servers/wildfly-10.xml</reddeer.config>
 	</properties>
 	<build>
 		<plugins>
@@ -44,6 +45,30 @@
 						</dependency>
 					</dependencies>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>download-wildfly</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.wildfly</groupId>
+									<artifactId>wildfly-dist</artifactId>
+									<version>10.0.0.Final</version>
+									<type>zip</type>
+								</artifactItem>
+							</artifactItems>
+							<skip>${skipTests}</skip>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
