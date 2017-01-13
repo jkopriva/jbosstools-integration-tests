@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.jboss.reddeer.common.logging.Logger;
+import org.jboss.reddeer.common.wait.AbstractWait;
 import org.jboss.reddeer.common.wait.TimePeriod;
 import org.jboss.reddeer.common.wait.WaitUntil;
 import org.jboss.reddeer.eclipse.jdt.ui.ProjectExplorer;
@@ -35,7 +36,7 @@ public class BasicArquilliaCruiserTest {
 	
 	private static final String STRING_1 = ".addAsResource(\"META-INF/test-persistence.xml\", \"META-INF/persistence.xml\")" ;
 	private static final String STRING_2 = "// Kilroy was here";
-	private static final String QUICKSTART_SEARCH_STRING = "the `kitchensink` quickstart";
+	private static final String QUICKSTART_SEARCH_STRING = "The `kitchensink` quickstart demonstrates a Java EE 7 web-enabled database application using JSF, CDI, EJB, JPA and Bean Validation.";
 	private static final String PROJECT_NAME = "jboss-kitchensink";
 	private static final String CENTRAL_STRING = "Red Hat Central";
 	
@@ -71,8 +72,11 @@ public class BasicArquilliaCruiserTest {
 	public void dynamicUpdateTest () {
 
 		/* Import the quickstart */
+		AbstractWait.sleep(TimePeriod.getCustom(5));
 		jsHelper.searchFor(QUICKSTART_SEARCH_STRING);
+		AbstractWait.sleep(TimePeriod.getCustom(5));
 		String[] examples = jsHelper.getExamples();
+		AbstractWait.sleep(TimePeriod.getCustom(5));
 		assertTrue("One example should be found", examples.length == 1);
 		importExample(examples[0]);
 		jsHelper.clearSearch();

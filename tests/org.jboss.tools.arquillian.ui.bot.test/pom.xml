@@ -72,13 +72,62 @@
 					<testSuite>org.jboss.tools.arquillian.ui.bot.test</testSuite>
 					<testClass>org.jboss.tools.arquillian.ui.bot.test.ArquillianSuite</testClass>
 					<dependencies combine.children="append">
-
 						<dependency>
 							<type>p2-installable-unit</type>
 							<artifactId>org.jboss.tools.arquillian.feature.feature.group</artifactId>
 							<version>0.0.0</version>
 						</dependency>
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.jboss.tools.central.feature.feature.group</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.eclipse.mylyn.commons.feature.group</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.jboss.tools.community.project.examples.feature.feature.group</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.jboss.tools.maven.project.examples.feature.feature.group</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.jboss.tools.openshift.express.feature.feature.group</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.jboss.ide.eclipse.as.feature.feature.group</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+<!-- 						Because of AngularJS Forge quickstart -->
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.jboss.tools.forge.feature.feature.group</artifactId>
+							<version>0.0.0</version>
+						</dependency>
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.eclipse.ui.browser</artifactId>
+							<version>0.0.0</version>
+						</dependency>
 					</dependencies>
+					<explodedBundles>
+						<bundle>org.jboss.tools.seam.core.test</bundle>
+						<bundle>org.jboss.tools.vpe</bundle>
+						<bundle>org.mozilla.xulrunner.carbon.macosx</bundle>
+						<bundle>org.mozilla.xulrunner.cocoa.macosx</bundle>
+						<bundle>org.mozilla.xulrunner.gtk.linux.x86</bundle>
+						<bundle>org.mozilla.xulrunner.gtk.linux.x86_64</bundle>
+						<bundle>org.mozilla.xulrunner.win32.win32.x86</bundle>
+					</explodedBundles>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -95,15 +144,22 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>smoke-to-be-fixed</id>
+			<id>project</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+	
+		<profile>
+			<id>smoke</id>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.eclipse.tycho</groupId>
 						<artifactId>tycho-surefire-plugin</artifactId>
 						<configuration>
-							<testSuite>org.jboss.tools.arquillian.ui.bot.test</testSuite>
 							<testClass>org.jboss.tools.arquillian.ui.bot.test.SmokeSuite</testClass>
+							<rd.config>${project.build.directory}/classes/project/wildfly-8.xml</rd.config>
 						</configuration>
 					</plugin>
 				</plugins>

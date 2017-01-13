@@ -82,8 +82,8 @@ function clickExample(name){
 	if ($( "#results" ).hasClass("hidden")){
 		return null;
 	}
-	var resultsDivs = getCurrentResultsDiv();
- 	getResultDivForExample(resultsDivs, name).find("a").click();
+	var resultsDivs = getCurrentResultsDiv();	
+ 	getResultDivForExample(resultsDivs, name).find("a")[0].click();
 }
 
 function clearSearch(){
@@ -109,3 +109,4 @@ function getEachInnerText(topElement){
 	});
 	return resultString;
 }
+

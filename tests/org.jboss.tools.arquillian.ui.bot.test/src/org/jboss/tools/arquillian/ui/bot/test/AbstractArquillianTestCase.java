@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.reddeer.common.logging.Logger;
+import org.jboss.reddeer.common.wait.WaitWhile;
+import org.jboss.reddeer.core.condition.JobIsRunning;
 import org.jboss.reddeer.eclipse.core.resources.Project;
 import org.jboss.reddeer.eclipse.jdt.ui.packageexplorer.PackageExplorer;
 import org.jboss.reddeer.eclipse.ui.problems.Problem;
@@ -47,6 +49,12 @@ public abstract class AbstractArquillianTestCase {
 		view.open();
 		
 		List<Problem> problems = view.getProblems(ProblemType.ERROR);
+		if(!problems.isEmpty()){
+			//try to rebuild project (some artifacts could not be downloaded)
+			forceMavenRepositoryUpdate();
+			new WaitWhile(new JobIsRunning());
+			problems = view.getProblems(ProblemType.ERROR);
+		}
 		assertThat("There are errors", problems, is((List) new ArrayList<Problem>()));
 	}
 	
