@@ -9,6 +9,7 @@ import org.jboss.reddeer.eclipse.jdt.ui.packageexplorer.PackageExplorer;
 import org.jboss.reddeer.eclipse.ui.problems.Problem;
 import org.jboss.reddeer.eclipse.ui.problems.ProblemsView;
 import org.jboss.reddeer.eclipse.ui.problems.ProblemsView.ProblemType;
+import org.jboss.reddeer.swt.impl.button.CheckBox;
 import org.jboss.tools.arquillian.ui.bot.reddeer.maven.UpdateMavenProjectDialog;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -54,6 +55,7 @@ public abstract class AbstractArquillianTestCase {
 		log.step("Force Maven update snapshots/releases");
 		UpdateMavenProjectDialog dialog = new UpdateMavenProjectDialog();
 		dialog.open(getProject());
+		new CheckBox("Offline").toggle(false);
 		dialog.forceUpdate(true);
 		dialog.ok();
 	}

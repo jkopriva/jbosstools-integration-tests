@@ -95,7 +95,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>smoke-to-be-fixed</id>
+			<id>smoke</id>
 			<build>
 				<plugins>
 					<plugin>

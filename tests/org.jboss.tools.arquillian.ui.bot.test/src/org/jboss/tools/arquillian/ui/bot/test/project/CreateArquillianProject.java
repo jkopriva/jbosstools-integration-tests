@@ -48,6 +48,7 @@ public class CreateArquillianProject extends AbstractArquillianTestCase{
 	@Test
 	public void testProjectCreation(){
 		addArquillianSupport();
+		forceMavenRepositoryUpdate();
 		checkProblems();
 	}
 
@@ -57,6 +58,5 @@ public class CreateArquillianProject extends AbstractArquillianTestCase{
 		
 		AddArquillianSupportDialog dialog = new AddArquillianSupportDialog();
 		dialog.open(project);
-		dialog.ok();
-	}
+		dialog.ok();	}
 }
