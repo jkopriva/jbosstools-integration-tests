@@ -16,6 +16,7 @@ import org.jboss.reddeer.common.wait.WaitUntil;
 import org.jboss.reddeer.common.wait.WaitWhile;
 import org.jboss.reddeer.core.condition.JobIsRunning;
 import org.jboss.reddeer.core.condition.ShellWithTextIsAvailable;
+import org.jboss.reddeer.core.matcher.WithTextMatcher;
 import org.jboss.reddeer.jface.wizard.WizardPage;
 import org.jboss.reddeer.swt.impl.button.CheckBox;
 import org.jboss.reddeer.swt.impl.button.FinishButton;
@@ -52,7 +53,7 @@ public class ImageRunSelectionPage extends WizardPage {
 	}
 
 	public void setName(String name) {
-		new LabeledText("Name:").setText(name);
+		new LabeledText("Container Name:").setText(name);
 	}
 
 	public void setEntrypoint(String Entrypoint) {
@@ -104,7 +105,7 @@ public class ImageRunSelectionPage extends WizardPage {
 	}
 
 	public void addExposedPort(String containerPort, String hostAddress, String hostPort) {
-		new PushButton("Add").click();
+		new PushButton(0, new WithTextMatcher("Add...")).click();
 		new LabeledText("Container port:").setText(containerPort);
 		new LabeledText("Host address:").setText(hostAddress);
 		new LabeledText("Host port:").setText(hostPort);
@@ -112,7 +113,7 @@ public class ImageRunSelectionPage extends WizardPage {
 	}
 
 	public void addLinkToContainer(String containerName, String alias) {
-		new PushButton("Add...").click();
+		new PushButton(1, new WithTextMatcher("Add...")).click();
 		new LabeledCombo("Container:").setText(containerName);
 		new LabeledText("Alias:").setText(alias);
 		new OkButton().click();
