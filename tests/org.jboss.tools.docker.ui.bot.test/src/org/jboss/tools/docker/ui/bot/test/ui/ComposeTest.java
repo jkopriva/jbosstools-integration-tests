@@ -27,6 +27,7 @@ import org.jboss.reddeer.swt.api.Menu;
 import org.jboss.reddeer.swt.exception.SWTLayerException;
 import org.jboss.reddeer.swt.impl.button.FinishButton;
 import org.jboss.reddeer.swt.impl.button.OkButton;
+import org.jboss.reddeer.swt.impl.button.PushButton;
 import org.jboss.reddeer.swt.impl.combo.LabeledCombo;
 import org.jboss.reddeer.swt.impl.menu.ContextMenu;
 import org.jboss.reddeer.swt.impl.menu.ShellMenu;
@@ -66,7 +67,7 @@ public class ComposeTest extends AbstractImageBotTest {
 		dialog.select(composePreference);
 		composePreference.setPathToDockerCompose(dockerComposePath);
 		composePreference.apply();
-		new OkButton().click();
+		new PushButton("Apply and Close").click();
 
 		// Build Image
 		DockerImagesTab imagesTab = openDockerImagesTab();

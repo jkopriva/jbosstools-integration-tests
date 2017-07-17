@@ -162,7 +162,8 @@ public class RunDockerImageLaunchConfiguration extends LaunchConfiguration {
 
 	public void setContainerName(String containerName) {
 		selectTab(MAIN_TAB_LABEL);
-		getContainerNameTextWidget().setText(containerName);
+		new LabeledText("Container Name:").setText(containerName);
+		//getContainerNameTextWidget().setText(containerName);
 	}
 
 	// Labeled texts "Name:" are duplicated in this dialog. This method is
@@ -179,7 +180,7 @@ public class RunDockerImageLaunchConfiguration extends LaunchConfiguration {
 					public Control getControl() {
 						return button.getSWTWidget().getParent();
 					}
-				}, "Name:");
+				}, "Container Name:");
 			}
 		});
 	}

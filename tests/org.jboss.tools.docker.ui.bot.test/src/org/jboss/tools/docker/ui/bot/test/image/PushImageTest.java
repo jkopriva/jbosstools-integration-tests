@@ -40,7 +40,7 @@ public class PushImageTest extends AbstractImageBotTest {
 
 	private static final String IMAGE_NAME = "test_push";
 	private static final String REGISTRY_ACCOUNT = System.getProperty(DOCKER_HUB_USERNAME) + "@https://index.docker.io";
-	private static final String IMAGE_TAG = System.getProperty(DOCKER_HUB_USERNAME) + "/variables";
+	private static final String IMAGE_TAG = "docker.io/" + System.getProperty(DOCKER_HUB_USERNAME) + "/variables";
 
 	private String imageNewTag = "";
 
