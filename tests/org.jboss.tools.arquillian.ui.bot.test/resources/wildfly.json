@@ -1,7 +1,11 @@
 {
 	"org.jboss.ide.eclipse.as.reddeer.server.requirement.ServerRequirement.JBossServer": [
 		{
+<<<<<<< HEAD
 			"runtime": "${jbosstools.test.jboss-wildfly-8.home}",
+=======
+			"runtime": "${jbosstools.test.wildfly.home}",
+>>>>>>> JBIDE-24941 Arquillian tests and plugin refactoring for RedDeer2
 			"version": "8.x",
 			"family": "WILDFLY"
 		}
