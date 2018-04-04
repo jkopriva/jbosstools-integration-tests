@@ -60,7 +60,7 @@ public abstract class ProjectTestTemplate {
 		WorkbenchShellHandler.getInstance().closeAllNonWorbenchShells();
 		ProjectExplorer pe = new ProjectExplorer();
 		pe.open();
-		pe.deleteAllProjects();
+		pe.deleteAllProjects(false);
 		// empty error log
 
 		LogView logView = new LogView();
