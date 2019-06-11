@@ -21,6 +21,7 @@ import org.jboss.tools.livereload.core.internal.service.EventFilter;
 import org.jboss.tools.livereload.core.internal.service.EventService;
 import org.jboss.tools.livereload.core.internal.service.Subscriber;
 
+@SuppressWarnings("restriction")
 public class Livereload {
 	
 	protected static final Logger log = Logger.getLogger(Livereload.class);
