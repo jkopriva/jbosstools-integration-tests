@@ -164,7 +164,7 @@ public class MylynTestBzQuery {
 
 				i.select();
 				i.doubleClick();
-				new WaitUntil(new TreeItemHasMinChildren(i, 1), TimePeriod.VERY_LONG); 
+				new WaitUntil(new TreeItemHasMinChildren(i, 1), TimePeriod.getCustom(600)); 
 
 				List <TreeItem> theQueryResults = i.getItems();
 				for (TreeItem q : theQueryResults) {
